@@ -48,4 +48,4 @@
   * Once the guess is sent, the server will respond with which letters are in the correct spot or are in the word somewhere else (via color)
   * If user uses 6 guesses without guessing the word, the game will end as a loss and the user will be asked to play again.
 
-## Created by Gerard Lamoureux and Devun Schneider
+**Created by Gerard Lamoureux and Devun Schneider**
