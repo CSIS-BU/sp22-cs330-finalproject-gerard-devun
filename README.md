@@ -41,7 +41,7 @@
 2. Only commit once as the final submission will result in **0 points to the whole team (no exception/excuse will be accepted)**
 3. Be creative.
 
-# Wordle
+# Wordle (Single-User Game)
   * The user will select how many letters of the word they want to guess
   * Server will select a word from the database for the client. Then ask the client to guess
   * The user will be able to guess within the parameters. The client will block if the input isn't valid
