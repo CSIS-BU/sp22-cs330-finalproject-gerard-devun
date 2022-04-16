@@ -8,9 +8,10 @@
 #include <unistd.h> 
 #define MAX_PENDING 5 
 #define MAX_SIZE 2048 
-int 
-main(int argc, char** argv) 
-{ 
+
+//add scoreboard
+
+int main(int argc, char** argv) { 
     struct sockaddr_in sin; 
     char buf[MAX_SIZE]; 
     int buf_len; 
@@ -44,6 +45,7 @@ main(int argc, char** argv)
             exit(1); 
         } 
         while ( (buf_len = recv(new_s, buf, sizeof(buf), 0)) ) {  
+            //print out scoreboard
             fwrite(buf, 1, buf_len, stdout); 
         } 
         fflush(stdout); 

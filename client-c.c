@@ -36,6 +36,8 @@ main(int argc, char * argv[])
     char lettersInWord[];
     //letters in word but wrong spot, size of the wordToGuess
     char wrongSpotLetters[];
+    /* add a username and a scorestreak that tracks how many words correct in a row for a word length */
+
 
     if (argc==3) { 
         host = argv[1]; 
@@ -133,5 +135,6 @@ main(int argc, char * argv[])
         } 
     } 
  // Done, close the s socket descriptor  close(s); 
+    close(s);
 }
 
