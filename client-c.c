@@ -17,6 +17,10 @@ main(int argc, char * argv[])
     char buf[MAX_SIZE]; 
     int s; 
     int len; 
+
+    //holds number of letters in guessing word
+    int numLetters;
+
     if (argc==3) { 
         host = argv[1]; 
         port = argv[2]; 
@@ -41,6 +45,21 @@ main(int argc, char * argv[])
         perror("simplex-talk: connect");  close(s); 
         exit(1); 
     } 
+
+    //ask player to input number of letters in word
+    printf("Enter number of letters in guessing word (3-10): ");
+    //checks if user inputs one number, and if the number falls between 3 and 10, if not ask to input again
+    while(scanf("%i", numLetters)!=1 && (numLetters>3 || numLetters<10)){
+        //tell user input was invalid
+        printf("You did not input a valid number, try again: ");
+        scanf("%*s");
+    }
+    //opens txt file based on number of letters wanted, can read or write file
+    *fp=fopen(numLetters+"L.txt","r+");
+    if(!fp){
+        printf("ERROR: Could not find "+ numLetters + "letter database file.");
+    }
+    
     int size; 
     while( (size=fread(buf, 1, MAX_SIZE, stdin) )) {  
         if(send(s, buf, size, 0) < 0) { 
@@ -49,3 +68,4 @@ main(int argc, char * argv[])
     } 
  // Done, close the s socket descriptor  close(s); 
 }
+
