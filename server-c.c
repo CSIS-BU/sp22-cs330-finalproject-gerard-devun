@@ -40,22 +40,33 @@ int main(int argc, char** argv) {
     listen(s, MAX_PENDING); 
     /* wait for connection, then receive and print text */  
     while(1) { 
-        if ((new_s = accept(s, (struct sockaddr *)&sin, &addr_len)) < 0) {  
+        if ((new_s = accept(s, (struct sockaddr *)&cliAddr, &addr_len)) < 0) {  
             fprintf(stderr, "error: %s accept\n", argv[0]);
             exit(1); 
-        } 
-        //Forks the process. Below is where the client will do its work. If it's the parent process, it will continue to try to connect another process.
+        }
+        //Forks the process into a parent and child process. A child process is created for every connected client.
         if(fork() == 0)
         {
-            int c_s = new_s;
-            while ( (buf_len = recv(c_s, buf, sizeof(buf), 0)) ) {  
+            //receive amount of letters from client
+            while ( (buf_len = recv(new_s, buf, sizeof(buf), 0)) ) {  
                 fwrite(buf, 1, buf_len, stdout); 
-            } 
-            fflush(stdout); 
-            close(c_s);
-            exit(0);
+            }
+            //select word from word database
+            //allow for 6 guesses
+            for(int i=0; i<6;i++)
+            {
+                //receive guess and then give feedback to client
+            }
+            //win and loss conditions
+            fflush(stdout);
+            close(new_s);
+            break;
         }
-        //receive amount of letters
+        else
+        {
+            close(new_s);
+            continue;
+        }
     } 
     close(s); 
     return 0; 
