@@ -72,13 +72,6 @@ main(int argc, char * argv[])
         printf("You did not input a valid number, try again: ");
         scanf("%*s");
     }
-    //opens txt file based on number of letters wanted, can read or write file
-    *fp=fopen(""+ numLetters +"L.txt","r+");
-    //if file isnt found, print an error and exit the program
-    if(!fp){
-        printf("ERROR: Could not find "+ numLetters + "letter database file.");
-        exit(1);
-    }
 
     /* sets correctLetters and wrongSpotLetters string to length of word and fill with astrics, will replace astrics with letters guessed correctly below */
     for(int i=0;i<=numLetters;i++){

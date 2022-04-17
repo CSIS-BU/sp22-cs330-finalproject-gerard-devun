@@ -51,7 +51,16 @@ int main(int argc, char** argv) {
             while ( (buf_len = recv(new_s, buf, sizeof(buf), 0)) ) {  
                 fwrite(buf, 1, buf_len, stdout); 
             }
+            File *fp;
+            int numLetters = atoi(buf); //need to remove \n from string first
             //select word from word database
+            //opens txt file based on number of letters wanted, can read or write file
+            fp=fopen(""+ numLetters +"L.txt","r+");
+            //if file isnt found, print an error and exit the program
+            if(!fp){
+                printf("ERROR: Could not find "+ numLetters + "letter database file.");
+                exit(1);
+            }
             //allow for 6 guesses
             for(int i=0; i<6;i++)
             {
