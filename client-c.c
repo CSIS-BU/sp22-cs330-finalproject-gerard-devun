@@ -93,7 +93,7 @@ main(int argc, char * argv[])
     fgets(*wordToGuess,numLetters+1,*fp);
     
     /* player guessing the word */
-    while(correctWord==false && guessAttempts!=5){
+    while(correctWord==false && guessAttempts!=6){
         printf("Enter your guess: ");
         scanf("%s",userWord); 
         if(userWord.length()!=numLetters){

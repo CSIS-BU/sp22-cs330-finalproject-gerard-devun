@@ -44,13 +44,19 @@ int main(int argc, char** argv) {
             fprintf(stderr, "error: %s accept\n", argv[0]);
             exit(1); 
         } 
-        while ( (buf_len = recv(new_s, buf, sizeof(buf), 0)) ) {  
-            //print out scoreboard
-            fwrite(buf, 1, buf_len, stdout); 
-        } 
-        fflush(stdout); 
-        close(new_s); 
+        //Forks the process. Below is where the client will do its work. If it's the parent process, it will continue to try to connect another process.
+        if(fork() == 0)
+        {
+            int c_s = new_s;
+            while ( (buf_len = recv(c_s, buf, sizeof(buf), 0)) ) {  
+                fwrite(buf, 1, buf_len, stdout); 
+            } 
+            fflush(stdout); 
+            close(c_s);
+            exit(0);
+        }
+        //receive amount of letters
     } 
- close(s); 
- return 0; 
+    close(s); 
+    return 0; 
 }
