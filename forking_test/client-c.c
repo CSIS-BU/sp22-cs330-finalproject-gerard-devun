@@ -44,5 +44,6 @@ main(int argc, char * argv[])
         if(buf[strlen(buf)-1]=='\n')
             break;
     } 
+    close(s);
  // Done, close the s socket descriptor  close(s); 
 }

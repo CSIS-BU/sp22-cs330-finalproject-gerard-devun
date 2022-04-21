@@ -65,13 +65,16 @@ main(int argc, char * argv[])
     } 
 
     //ask player to input number of letters in word
-    printf("Enter number of letters in guessing word (3-10): ");
+    printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na / if the letter is in the word but wrong location,\nand a - if the letter is not in the word.");
+    printf("First, Enter number of letters in guessing word (3-10): ");
     //checks if user inputs one number, and if the number falls between 3 and 10, if not ask to input again
     while(scanf("%i", numLetters)!=1 && (numLetters>3 || numLetters<10)){
         //tell user input was invalid
         printf("You did not input a valid number, try again: ");
         scanf("%*s");
     }
+
+
 
     /* sets correctLetters and wrongSpotLetters string to length of word and fill with astrics, will replace astrics with letters guessed correctly below */
     for(int i=0;i<=numLetters;i++){
