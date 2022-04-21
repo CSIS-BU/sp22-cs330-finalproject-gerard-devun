@@ -20,6 +20,7 @@ main(int argc, char * argv[])
 
     //holds number of letters in guessing word
     int numLetters;
+    /*
     //boolean for if the word is guessed correctly
     bool correctWord=false;
     //word to guess
@@ -35,17 +36,10 @@ main(int argc, char * argv[])
     //list of letters guessed that are in word
     char lettersInWord[];
     //letters in word but wrong spot, size of the wordToGuess
-    char wrongSpotLetters[];
+    char wrongSpotLetters[];*/
     /* add a username and a scorestreak that tracks how many words correct in a row for a word length */
-
-
-    if (argc==3) { 
-        host = argv[1]; 
-        port = argv[2]; 
-    } 
-    else { 
-        fprintf(stderr, "usage: %s host port\n", argv[0]);  exit(1); 
-    } 
+    host = "127.0.0.1"; 
+    port = "12000";
     /* translate host name into peer's IP address */  
     hp = gethostbyname(host); 
     if (!hp) { 
@@ -65,39 +59,43 @@ main(int argc, char * argv[])
     } 
 
     //ask player to input number of letters in word
-    printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na / if the letter is in the word but wrong location,\nand a - if the letter is not in the word.");
-    printf("First, Enter number of letters in guessing word (3-10): ");
+    //printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na / if the letter is in the word but wrong location,\nand a - if the letter is not in the word.\n");
+    //printf("First, Enter number of letters in guessing word (3-10): ");
     //checks if user inputs one number, and if the number falls between 3 and 10, if not ask to input again
-    while(scanf("%i", numLetters)!=1 && (numLetters>3 || numLetters<10)){
+    while(fgets(buf, MAX_SIZE, stdin) && (atoi(buf)<3 || atoi(buf)>10)){
         //tell user input was invalid
         printf("You did not input a valid number, try again: ");
-        scanf("%*s");
     }
 
+    if(send(s, buf, sizeof(buf), 0) < 0) { 
+        perror("client: send"); 
+    }
 
+    //numLetters = atoi(buf);
 
     /* sets correctLetters and wrongSpotLetters string to length of word and fill with astrics, will replace astrics with letters guessed correctly below */
-    for(int i=0;i<=numLetters;i++){
+    /*for(int i=0;i<=numLetters;i++){
         correctLetters[i]="*";
         wrongSpotLetters[i]="*";
-    }
+    }*/
 
     /* sets the word to guess to the first string found in file*/
     /*DELETE COMMENT BEFORE FINAL TURN IN **DOUBLE CHECK IF +1 IS NECESSARY** fgets reads a line from the specified stream and stores it into the string pointed to by wordToGuess. 
     It stops when either (n-1) (numLetters+1 -1) characters are read, the newline character is read, or the end-of-file is reached, 
     whichever comes first. via TutorialsPoint */
-    fgets(*wordToGuess,numLetters+1,*fp);
+    //fgets(*wordToGuess,numLetters+1,*fp);
     
     /* player guessing the word */
+    /*
     while(correctWord==false && guessAttempts!=6){
         printf("Enter your guess: ");
         scanf("%s",userWord); 
         if(userWord.length()!=numLetters){
             printf("Incorrect word length entered.");
-        }
+        }*/
         //if want to see if its a valid word: found database txt file https://raw.githubusercontent.com/dwyl/english-words/master/words.txt
         /* checking if letters are in word */
-        else if(){
+        /*else if(){
             for(int i=0;i<=numLetters;i++){
                 //check if letters are in the correct place, if they are: add to correctLetters[] and lettersInWord[]
                 if(userWord[i]==wordToGuess[i]){
@@ -111,26 +109,34 @@ main(int argc, char * argv[])
                         strncat(lettersInWord,&userWord[i],1);
                         strncat(lettersInWord,", ",1);
                     }
-                }
+                }*/
                
                 /** might need seperate for loops for each of these **/
 
                 //check if letters are in lettersInWord but NOT in correctLetters[], if so add to wrongSpotLetters[]
-                if(userWord[i])
-                //
+                /*if(userWord[i])
+                
                 //if letters are not in word add to incorrectLetters[]
             }
         }   
 
-    }
-
+    }*/
     int size; 
-    while( (size=fread(buf, 1, MAX_SIZE, stdin) )) {  
-        if(send(s, buf, size, 0) < 0) { 
+    while(fgets(buf, MAX_SIZE, stdin) ) {  
+        if(send(s, buf, strlen(buf), 0) < 0) { 
             perror("client: send"); 
-        } 
-    } 
- // Done, close the s socket descriptor  close(s); 
+        }
+        if(buf[strlen(buf)-1]=='\n')
+            break;
+    }
+    /*
+    while(fgets(buf, MAX_SIZE, stdin) ) {  
+        if(send(s, buf, strlen(buf), 0) < 0) { 
+            perror("client: send"); 
+        }
+        if(buf[strlen(buf)-1]=='\n')
+            break;
+    }*/
     close(s);
 }
 
