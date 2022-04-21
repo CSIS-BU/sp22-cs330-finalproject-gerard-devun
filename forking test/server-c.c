@@ -18,13 +18,11 @@ main(int argc, char** argv)
     socklen_t addr_len; 
     int s, new_s; 
     char *port; 
-    if(argc==2) { 
-        port = argv[1]; 
-    } 
-    else { 
-        fprintf(stderr, "usage: %s port\n", argv[0]); 
+    if(argc>1) { 
+        fprintf(stderr, "usage: %s \n", argv[0]); 
         exit(1); 
     } 
+    port = "12000";
     /* build address data structure */ 
     memset(&sin,'0',sizeof(sin));
     bzero((char *)&sin, sizeof(sin)); 
@@ -38,7 +36,7 @@ main(int argc, char** argv)
     if ((bind(s, (struct sockaddr *)&sin, sizeof(sin))) < 0) {  perror("simplex-talk: bind"); 
         exit(1); 
     } 
-    listen(s, 5); 
+    listen(s, 10); 
     /* wait for connection, then receive and print text */  
     while(1) { 
         if ((new_s = accept(s, (struct sockaddr *)&cliAddr, &addr_len)) < 0) {  
