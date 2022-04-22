@@ -12,17 +12,18 @@
 int 
 main(int argc, char** argv) 
 { 
+    FILE *fp;
     struct sockaddr_in sin;
     struct sockaddr_in cliAddr; 
     char buf[MAX_SIZE]; 
     int buf_len; 
     socklen_t addr_len; 
     int s, new_s; 
-    char *port; 
+    char *port,*init_dir,*end_dir; 
     if(argc>1) { 
         fprintf(stderr, "usage: %s \n", argv[0]); 
         exit(1); 
-    } 
+    }
     port = "12000";
     /* build address data structure */ 
     memset(&sin,'0',sizeof(sin));
@@ -47,13 +48,57 @@ main(int argc, char** argv)
         if(fork() == 0)
         {
             int numLetters;
-            //recv(new_s, buf, sizeof(buf), 0);
-            //fwrite(buf, 1, buf_len, stdout);
+            char wordToGuess[20];
+            char returnString[20];
             recv(new_s, buf, sizeof(buf), 0);
+            buf[strlen(buf)-1] = '\0';
             numLetters = atoi(buf);
-            fprintf(stdout, "letters: %i \n", numLetters);
+            fprintf(stdout, "letters: %sL.txt \n", buf);
+            //select word from word database
+            //opens txt file based on number of letters wanted, can read or write file
+            fp=fopen("WordDatabase/3L.txt","r+");
+            //if file isnt found, print an error and exit the program
+            if(!fp){
+                //printf(strcat("ERROR: Could not find ", buf, "letter database file."));
+                fflush(stdout);
+                close(new_s);
+                break;
+            }
+            fgets(wordToGuess, 20, fp);
+            fclose(fp);
+            wordToGuess[strlen(wordToGuess)-1] = '\0';
+            fprintf(stdout, "Word: %s... Waiting for Guess\n", wordToGuess);
+            //Give player 6 guesses
+            for(int i=0;i<1;i++)
+            {
+                recv(new_s, buf, sizeof(buf), 0);
+                buf[strlen(buf)-1] = '\0';
+                for(int k=0;k<20;k++)
+                    returnString[k] = '\0';
+                for(int j=0;j<numLetters;j++)
+                {
+                    if(buf[j] == wordToGuess[j])
+                    {
+                        returnString[j] = '*';
+                    }
+                    else
+                    {
+                        returnString[j] = '_';
+                        for(int l=0;l<numLetters;l++)
+                        {
+                            if(buf[j]==wordToGuess[l])
+                            {
+                                returnString[j] = '~';
+                                break;
+                            }
+                        }
+                    }
+                }
+                fprintf(stdout, "Result: %s\n", returnString);
+                //write(new_s,returnString,strlen(returnString));
+            }
             while ( (buf_len = recv(new_s, buf, sizeof(buf), 0)) ) {  
-                fwrite(buf, 1, buf_len, stdout); 
+                fwrite(buf, 1, buf_len, stdout);
             }
             fflush(stdout);
             close(new_s);

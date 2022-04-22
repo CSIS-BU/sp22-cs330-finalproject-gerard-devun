@@ -59,14 +59,10 @@ main(int argc, char * argv[])
     } 
 
     //ask player to input number of letters in word
-    //printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na / if the letter is in the word but wrong location,\nand a - if the letter is not in the word.\n");
-    //printf("First, Enter number of letters in guessing word (3-10): ");
-    //checks if user inputs one number, and if the number falls between 3 and 10, if not ask to input again
-    //while(fgets(buf, MAX_SIZE, stdin) && (atoi(buf)<3 || atoi(buf)>10)){
-        //tell user input was invalid
-        //printf("You did not input a valid number, try again: ");
-    //}
+    printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na ~ if the letter is in the word but wrong location,\nand a _ if the letter is not in the word.\n");
+    printf("First, Enter number of letters in guessing word (3-10): ");
 
+    //checks input for valid number
     while(fgets(buf, MAX_SIZE, stdin) ) {  
         if(atoi(buf)<3||atoi(buf)>10)
         {
@@ -80,7 +76,25 @@ main(int argc, char * argv[])
             break;
     }
 
-    //numLetters = atoi(buf);
+
+
+    //A LOT OF BELOW IS DONE ON SERVER INSTEAD
+
+    numLetters = atoi(buf);
+
+    while(fgets(buf, MAX_SIZE, stdin) ) {
+        buf[strlen(buf)-1] = '\0';
+        if(strlen(buf)<numLetters||strlen(buf)>numLetters)
+        {
+            printf("Your guess is invalid, try again: ");
+            continue;
+        }
+        buf[strlen(buf)] = '\n';
+        if(send(s, buf, strlen(buf), 0) < 0) { 
+            perror("client: send"); 
+        }
+        break;
+    }
 
     /* sets correctLetters and wrongSpotLetters string to length of word and fill with astrics, will replace astrics with letters guessed correctly below */
     /*for(int i=0;i<=numLetters;i++){
@@ -138,14 +152,14 @@ main(int argc, char * argv[])
         if(buf[strlen(buf)-1]=='\n')
             break;
     }
-    /*
+    
     while(fgets(buf, MAX_SIZE, stdin) ) {  
         if(send(s, buf, strlen(buf), 0) < 0) { 
             perror("client: send"); 
         }
         if(buf[strlen(buf)-1]=='\n')
             break;
-    }*/
+    }
     close(s);
 }
 
