@@ -62,13 +62,22 @@ main(int argc, char * argv[])
     //printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na / if the letter is in the word but wrong location,\nand a - if the letter is not in the word.\n");
     //printf("First, Enter number of letters in guessing word (3-10): ");
     //checks if user inputs one number, and if the number falls between 3 and 10, if not ask to input again
-    while(fgets(buf, MAX_SIZE, stdin) && (atoi(buf)<3 || atoi(buf)>10)){
+    //while(fgets(buf, MAX_SIZE, stdin) && (atoi(buf)<3 || atoi(buf)>10)){
         //tell user input was invalid
-        printf("You did not input a valid number, try again: ");
-    }
+        //printf("You did not input a valid number, try again: ");
+    //}
 
-    if(send(s, buf, sizeof(buf), 0) < 0) { 
-        perror("client: send"); 
+    while(fgets(buf, MAX_SIZE, stdin) ) {  
+        if(atoi(buf)<3||atoi(buf)>10)
+        {
+            printf("You did not input a valid number, try again: ");
+            continue;
+        }
+        if(send(s, buf, strlen(buf), 0) < 0) { 
+            perror("client: send"); 
+        }
+        if(buf[strlen(buf)-1]=='\n')
+            break;
     }
 
     //numLetters = atoi(buf);

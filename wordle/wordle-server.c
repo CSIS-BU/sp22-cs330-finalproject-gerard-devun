@@ -46,8 +46,12 @@ main(int argc, char** argv)
         }
         if(fork() == 0)
         {
+            int numLetters;
             //recv(new_s, buf, sizeof(buf), 0);
             //fwrite(buf, 1, buf_len, stdout);
+            recv(new_s, buf, sizeof(buf), 0);
+            numLetters = atoi(buf);
+            fprintf(stdout, "letters: %i \n", numLetters);
             while ( (buf_len = recv(new_s, buf, sizeof(buf), 0)) ) {  
                 fwrite(buf, 1, buf_len, stdout); 
             }
