@@ -20,6 +20,7 @@ main(int argc, char** argv)
     socklen_t addr_len; 
     int s, new_s; 
     char *port,*init_dir,*end_dir; 
+    int streak=0;
     if(argc>1) { 
         fprintf(stderr, "usage: %s \n", argv[0]); 
         exit(1); 
@@ -56,6 +57,9 @@ main(int argc, char** argv)
             fprintf(stdout, "letters: %sL.txt \n", buf);
             //select word from word database
             //opens txt file based on number of letters wanted, can read or write file
+
+            /*****GERARD***** shouldnt 3 be set to %s or numLetters below, so "WordDatabase/ "+%s+"L.txt" */
+
             fp=fopen("WordDatabase/3L.txt","r+");
             //if file isnt found, print an error and exit the program
             if(!fp){
@@ -69,33 +73,37 @@ main(int argc, char** argv)
             wordToGuess[strlen(wordToGuess)-1] = '\0';
             fprintf(stdout, "Word: %s... Waiting for Guess\n", wordToGuess);
             //Give player 6 guesses
+            int numGuesses=0;
             for(int i=0;i<1;i++)
             {
                 recv(new_s, buf, sizeof(buf), 0);
                 buf[strlen(buf)-1] = '\0';
-                for(int k=0;k<20;k++)
+                for(int k=0;k<20;k++){
                     returnString[k] = '\0';
-                for(int j=0;j<numLetters;j++)
-                {
-                    if(buf[j] == wordToGuess[j])
-                    {
-                        returnString[j] = '*';
-                    }
-                    else
-                    {
-                        returnString[j] = '_';
-                        for(int l=0;l<numLetters;l++)
+                    for(int j=0;j<numLetters;j++)
+                    {   
+                        //sees if letters are in right spot
+                        if(buf[j] == wordToGuess[j])
                         {
-                            if(buf[j]==wordToGuess[l])
+                            returnString[j] = '*';
+                        }
+                        else
+                        {
+                         returnString[j] = '_';
+                            //sees if letter is in word NOTE: Breaks after seeing first letter, doesnt check if letter is there twice+
+                            for(int l=0;l<numLetters;l++)
                             {
-                                returnString[j] = '~';
-                                break;
+                                if(buf[j]==wordToGuess[l])
+                                {
+                                    returnString[j] = '~';
+                                    break;
+                                }
                             }
                         }
                     }
+                    fprintf(stdout, "Result: %s\n", returnString);
+                    //write(new_s,returnString,strlen(returnString));
                 }
-                fprintf(stdout, "Result: %s\n", returnString);
-                //write(new_s,returnString,strlen(returnString));
             }
             while ( (buf_len = recv(new_s, buf, sizeof(buf), 0)) ) {  
                 fwrite(buf, 1, buf_len, stdout);
