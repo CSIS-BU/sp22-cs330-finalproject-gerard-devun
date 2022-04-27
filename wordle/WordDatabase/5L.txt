@@ -1,5 +1,3 @@
-urare
-sebic
 umber
 tonic
 shirr
@@ -40,3 +38,5 @@ marge
 qualm
 scare
 beast
+urare
+sebic

@@ -47,7 +47,7 @@ main(int argc, char** argv)
         }
         if(fork() == 0)
         {
-            int numLetters;
+            int numLetters, correctLetters;
             char wordToGuess[20];
             char returnString[20];
             recv(new_s, buf, sizeof(buf), 0);
@@ -55,8 +55,37 @@ main(int argc, char** argv)
             numLetters = atoi(buf);
             fprintf(stdout, "letters: %sL.txt \n", buf);
             //select word from word database
-            //opens txt file based on number of letters wanted, can read or write file
-            fp=fopen("WordDatabase/3L.txt","r+");
+            //opens txt file based on number of letters wanted, can and will read and write file
+            switch(numLetters)
+            {
+                case 3:
+                    fp=fopen("WordDatabase/3L.txt","r+");
+                    break;
+                case 4:
+                    fp=fopen("WordDatabase/4L.txt","r+");
+                    break;
+                case 5:
+                    fp=fopen("WordDatabase/5L.txt","r+");
+                    break;
+                case 6:
+                    fp=fopen("WordDatabase/6L.txt","r+");
+                    break;
+                case 7:
+                    fp=fopen("WordDatabase/7L.txt","r+");
+                    break;
+                case 8:
+                    fp=fopen("WordDatabase/8L.txt","r+");
+                    break;
+                case 9:
+                    fp=fopen("WordDatabase/9L.txt","r+");
+                    break;
+                case 10:
+                    fp=fopen("WordDatabase/10L.txt","r+");
+                    break;
+                default:
+                    fp=fopen("WordDatabase/3L.txt","r+"); //default case in case of error
+                    break;
+            }
             //if file isnt found, print an error and exit the program
             if(!fp){
                 //printf(strcat("ERROR: Could not find ", buf, "letter database file."));
@@ -64,21 +93,41 @@ main(int argc, char** argv)
                 close(new_s);
                 break;
             }
+            //gets the word to guess
             fgets(wordToGuess, 20, fp);
+            //placeholder for words
+            char wordguy[20];
+            //below puts wordToGuess at bottom of file/database for the next usable word next time.
+            int z=0;
+            while(fgets(wordguy, 20, fp))
+            {
+                fseek(fp,(z*(numLetters+1)),SEEK_SET);
+                fprintf(fp,"%s",wordguy);
+                fseek(fp,numLetters+1,SEEK_CUR);
+                z++;
+            }
+            fseek(fp,(z*(numLetters+1)),SEEK_SET);
+            fprintf(fp,"%s",wordToGuess);
             fclose(fp);
+            //remove the newline character from string for sake of guessing.
             wordToGuess[strlen(wordToGuess)-1] = '\0';
-            fprintf(stdout, "Word: %s... Waiting for Guess\n", wordToGuess);
+            fprintf(stdout, "Word: %s... Waiting for Guess\n", wordToGuess); //only seen by server
             //Give player 6 guesses
-            for(int i=0;i<1;i++)
+            for(int i=0;i<6;i++)
             {
                 recv(new_s, buf, sizeof(buf), 0);
+                //remove newline from buffer for guessing
                 buf[strlen(buf)-1] = '\0';
+                //make all of the return string empty
                 for(int k=0;k<20;k++)
                     returnString[k] = '\0';
+                //track correct letters. If all correct, then game must end.
+                correctLetters = 0;
                 for(int j=0;j<numLetters;j++)
                 {
                     if(buf[j] == wordToGuess[j])
                     {
+                        correctLetters++;
                         returnString[j] = '*';
                     }
                     else
@@ -95,18 +144,19 @@ main(int argc, char** argv)
                     }
                 }
                 fprintf(stdout, "Result: %s\n", returnString);
-                //write(new_s,returnString,strlen(returnString));
-            }
-            while ( (buf_len = recv(new_s, buf, sizeof(buf), 0)) ) {  
-                fwrite(buf, 1, buf_len, stdout);
+                if(send(new_s, returnString, strlen(returnString), 0) < 0) { 
+                    perror("client: send"); 
+                }
+                if(correctLetters >= numLetters)
+                    break;
             }
             fflush(stdout);
-            close(new_s);
+            close(new_s); //closing the socket in the child so it is not remained open
             break;
         }
         else
         {
-            close(new_s);
+            close(new_s); //closing the socket in the parent so a new client can connect
             continue;
         }
     } 

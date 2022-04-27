@@ -1,6 +1,3 @@
-done
-lute
-shed
 vamp
 dane
 soot
@@ -37,3 +34,6 @@ wood
 rent
 cope
 sour
+done
+lute
+shed
