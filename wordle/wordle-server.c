@@ -16,6 +16,11 @@ int
 main(int argc, char** argv) 
 { 
     FILE *fp;
+    // variables for streak txt file
+    FILE *streakP;
+    int streakHold[8]; //temporary array to hold high score steaks
+    int currentStreak=0;
+
     struct sockaddr_in sin;
     struct sockaddr_in cliAddr; 
     char buf[MAX_SIZE]; 
@@ -163,14 +168,19 @@ main(int argc, char** argv)
                     if(correctLetters >= numLetters)
                     {
                         win = T;
+                        currentStreak++;//if they won add to streak
                         break;
                     }
                 }
                 wordToGuess[strlen(wordToGuess)] = '\n';
+                //GAME OVER check
                 if(win == F)
                 {
                     strcat(wordguy, "Game Over! You Didn't Guess the word!\nThe Word was: ");
                     strcat(wordguy, wordToGuess);
+
+                    6
+
                     if(send(new_s, wordguy, strlen(wordguy),0) < 0)
                     {
                         perror("client: send");
@@ -180,6 +190,25 @@ main(int argc, char** argv)
                 {
                     strcat(wordguy, "Game Over! You Guessed Correctly!\nThe Word was: ");
                     strcat(wordguy, wordToGuess);
+
+                    streakP=fopen("StreakHighScore.txt","r+");
+                    int num;
+                    int i=0;
+                    //puts the current records into an array
+                    while(fscanf(streakP,"%i",&num)>0){
+                        if(!streakP){
+                            perror("Could not open SterakHighScore.txt.");
+                            break;
+                        }
+                        streakHold[i]=num;
+                        i++;
+                    }
+                    //checks if the current record for the players chosen letters in word is more than the one stored in the database and if it is, change it
+                    if(streakHold[numLetters-3]<currentStreak){
+                        streakHold[numLetters-3]=currentStreak;
+                    }
+                    fwrite(streakHold,sizeof(int),sizeof(streakHold),streakP); //rewrites the StreakHighScore text to the current records
+                    fclose(streakP);
                     if(send(new_s, wordguy, strlen(wordguy),0) < 0)
                     {
                         perror("client: send");
