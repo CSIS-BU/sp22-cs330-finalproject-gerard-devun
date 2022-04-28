@@ -58,66 +58,98 @@ main(int argc, char * argv[])
         exit(1); 
     } 
 
-    //ask player to input number of letters in word
-    printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na ~ if the letter is in the word but wrong location,\nand a _ if the letter is not in the word.\n");
-    printf("First, Enter number of letters in guessing word (3-10): ");
-
-    //checks input for valid number
-    while(fgets(buf, MAX_SIZE, stdin) ) {  
-        if(atoi(buf)<3||atoi(buf)>10)
-        {
-            printf("You did not input a valid number, try again: ");
-            continue;
-        }
-        if(send(s, buf, strlen(buf), 0) < 0) { 
-            perror("client: send"); 
-        }
-        if(buf[strlen(buf)-1]=='\n')
-            break;
-    }
-
-
-
-    //A LOT OF BELOW IS DONE ON SERVER INSTEAD
-
-    numLetters = atoi(buf);
-
-    for(int i=0;i<6;i++)
+    while(1)
     {
-        printf("Enter Your Guess: ");
-        while(fgets(buf, MAX_SIZE, stdin) )
-        {
-            buf[strlen(buf)-1] = '\0';
-            if(strlen(buf)<numLetters||strlen(buf)>numLetters)
+        //ask player to input number of letters in word
+        printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na ~ if the letter is in the word but wrong location,\nand a _ if the letter is not in the word.\n");
+        printf("First, Enter number of letters in guessing word (3-10): ");
+
+        //checks input for valid number
+        while(fgets(buf, MAX_SIZE, stdin) ) {  
+            if(atoi(buf)<3||atoi(buf)>10)
             {
-                printf("Your guess is invalid, try again: ");
+                printf("You did not input a valid number, try again: ");
                 continue;
             }
-            buf[strlen(buf)] = '\n';
             if(send(s, buf, strlen(buf), 0) < 0) { 
                 perror("client: send"); 
             }
-            break;
+            if(buf[strlen(buf)-1]=='\n')
+                break;
         }
 
-        recv(s, buf, sizeof(buf), 0);
-        buf[strlen(buf)-1] = '\0';
-        fprintf(stdout, "Feedback Results: %s\n", buf);
-        correctLetters = 0;
-        for(int j=0;j<numLetters;j++)
+
+
+        //A LOT OF BELOW IS DONE ON SERVER INSTEAD
+
+        numLetters = atoi(buf);
+
+        for(int i=0;i<6;i++)
         {
-            if(buf[j]=='*')
-                correctLetters++;
+            printf("Enter Your Guess: ");
+            while(fgets(buf, MAX_SIZE, stdin) )
+            {
+                buf[strlen(buf)-1] = '\0';
+                if(strlen(buf)<numLetters||strlen(buf)>numLetters)
+                {
+                    printf("Your guess is invalid, try again: ");
+                    continue;
+                }
+                buf[strlen(buf)] = '\n';
+                if(send(s, buf, strlen(buf), 0) < 0) { 
+                    perror("client: send"); 
+                }
+                break;
+            }
+
+            recv(s, buf, sizeof(buf), 0);
+            buf[strlen(buf)-1] = '\0';
+            fprintf(stdout, "\33[2K\rFeedback Results: %s\n", buf);
+            correctLetters = 0;
+            for(int j=0;j<numLetters;j++)
+            {
+                if(buf[j]=='*')
+                    correctLetters++;
+            }
+            if(correctLetters >= numLetters)
+            {
+                break;
+            }
+            
         }
-        if(correctLetters >= numLetters)
+        fflush(stdin);
+        recv(s, buf, sizeof(buf), 0);
+        fprintf(stdout, "%s", buf);
+        printf("Play Again? (Y/N): ");
+        while(fgets(buf, MAX_SIZE, stdin) )
         {
-            printf("Game Over! You Win!\nYou guessed the word in %i guesses!\n", i+1);
+            if(buf[0] == 'y' || buf[0] == 'Y')
+            {
+                printf("Restarting...\n");
+            }
+            else if(buf[0] == 'n' || buf[0] == 'N')
+            {
+                printf("Thanks for Playing!\n");
+            }
+            else
+            {
+                printf("Invalid Input, Play Again? (Y/N): ");
+                continue;
+            }
+            if(send(s, buf, strlen(buf), 0) < 0) { 
+                perror("client: send"); 
+            }
+            if(buf[0] == 'n' || buf[0] == 'N')
+            {
+                close(s);
+                return 0;
+            }
             break;
         }
-        
+        fflush(stdout);
     }
 
-    printf("Exit Game\n");
+
 
     /* sets correctLetters and wrongSpotLetters string to length of word and fill with astrics, will replace astrics with letters guessed correctly below */
     /*for(int i=0;i<=numLetters;i++){
@@ -175,6 +207,5 @@ main(int argc, char * argv[])
         if(buf[strlen(buf)-1]=='\n')
             break;
     } */
-    close(s);
 }
 
