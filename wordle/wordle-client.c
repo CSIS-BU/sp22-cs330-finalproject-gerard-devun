@@ -65,7 +65,7 @@ main(int argc, char * argv[])
     } 
 
     //ask player to input number of letters in word
-    printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na ~ if the letter is in the word but wrong location,\nand a _ if the letter is not in the word.\n");
+    printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return \033[30;102mgreen\033[0m if letter is in the correct spot,\n\033[30;103myellow\033[0m if the letter is in the word but wrong location,\nand no color if the letter is not in the word.\n");
     printf("First, Enter number of letters in guessing word (3-10): ");
 
     //checks input for valid number
