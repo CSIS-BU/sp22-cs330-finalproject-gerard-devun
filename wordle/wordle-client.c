@@ -38,8 +38,14 @@ main(int argc, char * argv[])
     //letters in word but wrong spot, size of the wordToGuess
     char wrongSpotLetters[];*/
     /* add a username and a scorestreak that tracks how many words correct in a row for a word length */
-    host = "127.0.0.1"; 
-    port = "12000";
+    if (argc==3) { 
+        host = argv[1]; 
+        port = argv[2]; 
+    } 
+    else { 
+        fprintf(stderr, "usage: %s host port\n", argv[0]); 
+        exit(1); 
+    } 
     /* translate host name into peer's IP address */  
     hp = gethostbyname(host); 
     if (!hp) { 
@@ -58,31 +64,33 @@ main(int argc, char * argv[])
         exit(1); 
     } 
 
+    //ask player to input number of letters in word
+    printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na ~ if the letter is in the word but wrong location,\nand a _ if the letter is not in the word.\n");
+    printf("First, Enter number of letters in guessing word (3-10): ");
+
+    //checks input for valid number
+    while(fgets(buf, MAX_SIZE, stdin) ) {  
+        if(atoi(buf)<3||atoi(buf)>10)
+        {
+            printf("You did not input a valid number, try again: ");
+            continue;
+        }
+        if(send(s, buf, strlen(buf), 0) < 0) { 
+            perror("client: send"); 
+        }
+        if(buf[strlen(buf)-1]=='\n')
+            break;
+    }
+
+
+
+    //A LOT OF BELOW IS DONE ON SERVER INSTEAD
+
+    numLetters = atoi(buf);
+    char guessedWord[20];
+
     while(1)
     {
-        //ask player to input number of letters in word
-        printf("Welcome to Wordle!!\nHow to play:\nGuess a word, the server will return a * if letter is in the correct spot,\na ~ if the letter is in the word but wrong location,\nand a _ if the letter is not in the word.\n");
-        printf("First, Enter number of letters in guessing word (3-10): ");
-
-        //checks input for valid number
-        while(fgets(buf, MAX_SIZE, stdin) ) {  
-            if(atoi(buf)<3||atoi(buf)>10)
-            {
-                printf("You did not input a valid number, try again: ");
-                continue;
-            }
-            if(send(s, buf, strlen(buf), 0) < 0) { 
-                perror("client: send"); 
-            }
-            if(buf[strlen(buf)-1]=='\n')
-                break;
-        }
-
-
-
-        //A LOT OF BELOW IS DONE ON SERVER INSTEAD
-
-        numLetters = atoi(buf);
 
         for(int i=0;i<6;i++)
         {
@@ -95,6 +103,7 @@ main(int argc, char * argv[])
                     printf("Your guess is invalid, try again: ");
                     continue;
                 }
+                strcpy(guessedWord,buf);
                 buf[strlen(buf)] = '\n';
                 if(send(s, buf, strlen(buf), 0) < 0) { 
                     perror("client: send"); 
@@ -104,13 +113,26 @@ main(int argc, char * argv[])
 
             recv(s, buf, sizeof(buf), 0);
             buf[strlen(buf)-1] = '\0';
-            fprintf(stdout, "\33[2K\rFeedback Results: %s\n", buf);
+            fprintf(stdout, "\033[A\33[2KT\rFeedback Results: ");
             correctLetters = 0;
             for(int j=0;j<numLetters;j++)
             {
                 if(buf[j]=='*')
+                {
+                    printf("\033[33;42m");
+                    fprintf(stdout, "\033[30;102m%c\033[0m",guessedWord[j]);
                     correctLetters++;
+                }
+                else if(buf[j]=='~')
+                {
+                    fprintf(stdout, "\033[30;103m%c\033[0m",guessedWord[j]);
+                }
+                else
+                {
+                    fprintf(stdout, "%c",guessedWord[j]);
+                }
             }
+            printf("\n");
             if(correctLetters >= numLetters)
             {
                 break;

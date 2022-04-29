@@ -1,15 +1,8 @@
-burrowing
-planiform
-enrapture
-silverfin
-nicknamed
-rigidness
-poignancy
 swinecote
 fruitless
 butteries
 reflected
-zootomoist
+zootomist
 adenology
 neologian
 travelled
@@ -39,3 +32,10 @@ underwood
 talbotype
 colonized
 factorize
+burrowing
+planiform
+enrapture
+silverfin
+nicknamed
+rigidness
+poignancy

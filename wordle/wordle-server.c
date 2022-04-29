@@ -23,11 +23,13 @@ main(int argc, char** argv)
     socklen_t addr_len; 
     int s, new_s; 
     char *port,*init_dir,*end_dir; 
-    if(argc>1) { 
-        fprintf(stderr, "usage: %s \n", argv[0]); 
+    if(argc==2) { 
+        port = argv[1]; 
+    } 
+    else { 
+        fprintf(stderr, "usage: %s port\n", argv[0]); 
         exit(1); 
     }
-    port = "12000";
     /* build address data structure */ 
     memset(&sin,'0',sizeof(sin));
     bzero((char *)&sin, sizeof(sin)); 
@@ -56,13 +58,13 @@ main(int argc, char** argv)
             char returnString[20];
             //placeholder for words
             char wordguy[100];
+            recv(new_s, buf, sizeof(buf), 0);
+            buf[strlen(buf)-1] = '\0';
+            numLetters = atoi(buf);
             while(1)
             {
                 for(int k=0;k<20;k++)
                     wordToGuess[k] = '\0';
-                recv(new_s, buf, sizeof(buf), 0);
-                buf[strlen(buf)-1] = '\0';
-                numLetters = atoi(buf);
                 fprintf(stdout, "letters: %sL.txt \n", buf);
                 //select word from word database
                 //opens txt file based on number of letters wanted, can and will read and write file
@@ -138,7 +140,7 @@ main(int argc, char** argv)
                     correctLetters = 0;
                     for(int j=0;j<numLetters;j++)
                     {
-                        if(buf[j] == wordToGuess[j])
+                        if(tolower(buf[j]) == wordToGuess[j])
                         {
                             correctLetters++;
                             returnString[j] = '*';
@@ -148,7 +150,7 @@ main(int argc, char** argv)
                             returnString[j] = '_';
                             for(int l=0;l<numLetters;l++)
                             {
-                                if(buf[j]==wordToGuess[l])
+                                if(tolower(buf[j])==wordToGuess[l])
                                 {
                                     returnString[j] = '~';
                                     break;
@@ -189,7 +191,9 @@ main(int argc, char** argv)
                 recv(new_s, buf, sizeof(buf), 0);
                 if(buf[0] == 'n' || buf[0] == 'N')
                 {
-                    break;
+                    fflush(stdout);
+                    close(new_s);
+                    return 0;
                 }
             }
             fflush(stdout);
