@@ -61,6 +61,7 @@ main(int argc, char** argv)
             char returnString[20];
             //placeholder for words
             char wordguy[100];
+            char streakguy[100];
 
             int streakHold[8]; //temporary array to hold high score steaks
             int currentStreak = 0; //players current game streak
@@ -206,6 +207,18 @@ main(int argc, char** argv)
                     //checks if the current record for the players chosen letters in word is more than the one stored in the database and if it is, change it
                     if (streakHold[numLetters - 3] < currentStreak) {
                         streakHold[numLetters - 3] = currentStreak;
+                    }
+                    strcat(streakguy, "Your Streak Was: ");
+                    strcat(streakguy, currentStreak);
+                    if (streakHold[numLetters - 3] = currentStreak) {
+                        strcat(streakguy, "You hold the new record for " + numLetters + " letters!");
+                    }
+                    else {
+                        strcat(streakguy, "The streak for " + numLetters + " letters is " + streakHold[numLetters - 3]);
+                    }
+                    if (send(new_s, streakguy, strlen(streakguy), 0) < 0)
+                    {
+                        perror("client: send");
                     }
                     fwrite(streakHold, sizeof(int), sizeof(streakHold), streakP); //rewrites the StreakHighScore text to the current records
                     fclose(streakP);
