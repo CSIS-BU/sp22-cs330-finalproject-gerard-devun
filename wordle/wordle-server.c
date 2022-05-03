@@ -182,6 +182,7 @@ main(int argc, char** argv)
                         break;
                     }
                 }
+                recv(new_s, buf, sizeof(buf), 0);
                 wordToGuess[strlen(wordToGuess)] = '\n';
                 if(win == F)
                 {
@@ -197,7 +198,7 @@ main(int argc, char** argv)
 
                     streakP = fopen("StreakHighScore.txt", "r+");
                     int num;
-                    int j = 0;
+                    int i = 0;
                     //puts the current records into an array
                     while (fscanf(streakP, "%i", &num) > 0) {
                         if (!streakP) {
@@ -205,7 +206,7 @@ main(int argc, char** argv)
                             break;
                         }
                         streakHold[i] = num;
-                        j++;
+                        i++;
                     }
                     fclose(streakP);
                     streakP = fopen("StreakHighScore.txt", "w+");
@@ -213,7 +214,7 @@ main(int argc, char** argv)
                     if (streakHold[numLetters - 3] < currentStreak) {
                         streakHold[numLetters - 3] = currentStreak;
                     }
-                    for(int h=0;h<8;h++)
+                    for(int i=0;i<8;i++)
                     {
                         fprintf(streakP, "%i\n", streakHold[i]);
                     }
@@ -249,6 +250,7 @@ main(int argc, char** argv)
                         perror("client: send");
                     }
                 }
+                printf("hello working?");
                 fflush(stdout);
                 recv(new_s, buf, sizeof(buf), 0);
                 if(buf[0] == 'n' || buf[0] == 'N')

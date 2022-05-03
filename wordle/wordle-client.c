@@ -82,6 +82,10 @@ main(int argc, char * argv[])
             break;
     }
 
+
+
+    //A LOT OF BELOW IS DONE ON SERVER INSTEAD
+
     numLetters = atoi(buf);
     char guessedWord[20];
 
@@ -135,6 +139,10 @@ main(int argc, char * argv[])
             }
             
         }
+        if(send(s, buf, strlen(buf), 0) < 0) { 
+            perror("client: send"); 
+        }
+        fflush(stdin);
         recv(s, buf, sizeof(buf), 0);
         fprintf(stdout, "%s", buf);
         printf("Play Again? (Y/N): ");
@@ -225,4 +233,3 @@ main(int argc, char * argv[])
             break;
     } */
 }
-
