@@ -1,12 +1,3 @@
-shed
-vamp
-dane
-soot
-nave
-goar
-lost
-milt
-reft
 path
 bouk
 zone
@@ -37,3 +28,12 @@ cope
 sour
 done
 lute
+shed
+vamp
+dane
+soot
+nave
+goar
+lost
+milt
+reft

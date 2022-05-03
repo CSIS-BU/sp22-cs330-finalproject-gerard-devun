@@ -197,7 +197,7 @@ main(int argc, char** argv)
 
                     streakP = fopen("StreakHighScore.txt", "r+");
                     int num;
-                    int i = 0;
+                    int j = 0;
                     //puts the current records into an array
                     while (fscanf(streakP, "%i", &num) > 0) {
                         if (!streakP) {
@@ -205,7 +205,7 @@ main(int argc, char** argv)
                             break;
                         }
                         streakHold[i] = num;
-                        i++;
+                        j++;
                     }
                     fclose(streakP);
                     streakP = fopen("StreakHighScore.txt", "w+");
@@ -213,7 +213,7 @@ main(int argc, char** argv)
                     if (streakHold[numLetters - 3] < currentStreak) {
                         streakHold[numLetters - 3] = currentStreak;
                     }
-                    for(int i=0;i<8;i++)
+                    for(int h=0;h<8;h++)
                     {
                         fprintf(streakP, "%i\n", streakHold[i]);
                     }

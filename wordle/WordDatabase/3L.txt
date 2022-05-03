@@ -1,5 +1,3 @@
-ese
-dop
 war
 wep
 sot
@@ -10,6 +8,7 @@ roe
 pan
 cur
 bet
+wax
 wax
 kit
 mot
@@ -37,3 +36,4 @@ six
 irp
 gyp
 orb
+dop
