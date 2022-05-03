@@ -1,13 +1,3 @@
-price
-otary
-uphaf
-siege
-pyxle
-macco
-brake
-fuage
-swiss
-iodic
 shama
 abuzz
 scoat
@@ -40,3 +30,13 @@ mirky
 brute
 jazel
 woald
+price
+otary
+uphaf
+siege
+pyxle
+macco
+brake
+fuage
+swiss
+iodic

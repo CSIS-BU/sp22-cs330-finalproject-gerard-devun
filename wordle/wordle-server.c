@@ -67,7 +67,11 @@ main(int argc, char** argv)
             int streakHold[8]; //temporary array to hold high score steaks
             int currentStreak = 0; //players current game streak
 
-            recv(new_s, buf, sizeof(buf), 0);
+            if(recv(new_s, buf, sizeof(buf), 0)<0)
+            {
+                close(new_s);
+                break;
+            }
             buf[strlen(buf)-1] = '\0';
             numLetters = atoi(buf);
             while(1)
@@ -104,8 +108,8 @@ main(int argc, char** argv)
                         fp=fopen("WordDatabase/10L.txt","r+");
                         break;
                     default:
-                        fp=fopen("WordDatabase/3L.txt","r+"); //default case in case of error
-                        break;
+                        close(new_s); //default case in case of error
+                        return 0;
                 }
                 //if file isnt found, print an error and exit the program
                 if(!fp){
