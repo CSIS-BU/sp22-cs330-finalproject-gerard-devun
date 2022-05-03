@@ -60,8 +60,9 @@ main(int argc, char** argv)
             char wordToGuess[20];
             char returnString[20];
             //placeholder for words
-            char wordguy[100];
-            char streakguy[100];
+            char wordguy[MAX_SIZE];
+
+            char numToString[MAX_SIZE];
 
             int streakHold[8]; //temporary array to hold high score steaks
             int currentStreak = 0; //players current game streak
@@ -117,7 +118,7 @@ main(int argc, char** argv)
                 fgets(wordToGuess, 20, fp);
                 //below puts wordToGuess at bottom of file/database for the next usable word next time.
                 int z=0;
-                while(fgets(wordguy, 100, fp))
+                while(fgets(wordguy, MAX_SIZE, fp))
                 {
                     fseek(fp,(z*(numLetters+1)),SEEK_SET);
                     fprintf(fp,"%s",wordguy);
@@ -128,7 +129,7 @@ main(int argc, char** argv)
                 fprintf(fp,"%s",wordToGuess);
                 fclose(fp);
 
-                for(int k=0;k<100;k++)
+                for(int k=MAX_SIZE-1;k>=0;k--)
                     wordguy[k] = '\0';
                 //remove the newline character from string for sake of guessing.
                 wordToGuess[strlen(wordToGuess)-1] = '\0';
@@ -142,7 +143,7 @@ main(int argc, char** argv)
                     //remove newline from buffer for guessing
                     buf[strlen(buf)-1] = '\0';
                     //make all of the return string empty
-                    for(int k=0;k<20;k++)
+                    for(int k=20;k>=0;k--)
                         returnString[k] = '\0';
                     //track correct letters. If all correct, then game must end.
                     correctLetters = 0;
@@ -182,18 +183,6 @@ main(int argc, char** argv)
                 {
                     strcat(wordguy, "Game Over! You Didn't Guess the word!\nThe Word was: ");
                     strcat(wordguy, wordToGuess);
-                    streakP = fopen("StreakHighScore.txt", "r+");
-                    int num;
-                    int i = 0;
-                    //puts the current records into an array
-                    while (fscanf(streakP, "%i", &num) > 0) {
-                        if (!streakP) {
-                            perror("Could not open SterakHighScore.txt.");
-                            break;
-                        }
-                        streakHold[i] = num;
-                        i++;
-                    }
                     if(send(new_s, wordguy, strlen(wordguy),0) < 0)
                     {
                         perror("client: send");
@@ -201,27 +190,55 @@ main(int argc, char** argv)
                 }
                 else
                 {
-                    strcat(wordguy, "Game Over! You Guessed Correctly!\nThe Word was: ");
-                    strcat(wordguy, wordToGuess);
 
+                    streakP = fopen("StreakHighScore.txt", "r+");
+                    int num;
+                    int i = 0;
+                    //puts the current records into an array
+                    while (fscanf(streakP, "%i", &num) > 0) {
+                        if (!streakP) {
+                            perror("Could not open StreakHighScore.txt.");
+                            break;
+                        }
+                        streakHold[i] = num;
+                        i++;
+                    }
+                    fclose(streakP);
+                    streakP = fopen("StreakHighScore.txt", "w+");
                     //checks if the current record for the players chosen letters in word is more than the one stored in the database and if it is, change it
                     if (streakHold[numLetters - 3] < currentStreak) {
                         streakHold[numLetters - 3] = currentStreak;
                     }
-                    strcat(streakguy, "Your Streak Was: ");
-                    strcat(streakguy, currentStreak);
-                    if (streakHold[numLetters - 3] = currentStreak) {
-                        strcat(streakguy, "You hold the new record for " + numLetters + " letters!");
+                    for(int i=0;i<8;i++)
+                    {
+                        fprintf(streakP, "%i\n", streakHold[i]);
+                    }
+                    fclose(streakP);
+
+                    strcat(wordguy, "Game Over! You Guessed Correctly!\nThe Word was: ");
+                    strcat(wordguy, wordToGuess);
+                    if (streakHold[numLetters - 3] == currentStreak) {
+                        strcpy(numToString, "");
+                        strcat(wordguy, "\nYou hold the new record for ");
+                        sprintf(numToString,"%d", numLetters);
+                        strcat(wordguy, numToString);
+                        strcpy(numToString, "");
+                        strcat(wordguy, " letters at ");
+                        sprintf(numToString,"%d", streakHold[numLetters-3]);
+                        strcat(wordguy, numToString);
                     }
                     else {
-                        strcat(streakguy, "The streak for " + numLetters + " letters is " + streakHold[numLetters - 3]);
+                        strcpy(numToString, "");
+                        strcat(wordguy, "\nThe streak for ");
+                        sprintf(numToString,"%d", numLetters);
+                        strcat(wordguy, numToString);
+                        strcpy(numToString, "");
+                        strcat(wordguy, " letters is ");
+                        sprintf(numToString,"%d", streakHold[numLetters-3]);
+                        strcat(wordguy, numToString);
+                        //strcat(streakguy, "The streak for " + numLetters + " letters is " + streakHold[numLetters - 3]);
                     }
-                    if (send(new_s, streakguy, strlen(streakguy), 0) < 0)
-                    {
-                        perror("client: send");
-                    }
-                    fwrite(streakHold, sizeof(int), sizeof(streakHold), streakP); //rewrites the StreakHighScore text to the current records
-                    fclose(streakP);
+                    wordguy[strlen(wordguy)] = '\n';
 
                     if(send(new_s, wordguy, strlen(wordguy),0) < 0)
                     {
